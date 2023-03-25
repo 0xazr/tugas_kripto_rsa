@@ -299,6 +299,22 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Payment",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Receipt",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
