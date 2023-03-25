@@ -1,14 +1,26 @@
-from flask import Flask, request, jsonify
-import psycopg2
-import json
-
+from flask import Flask, request, jsonify, session, flash, redirect, url_for
+from werkzeug.utils import secure_filename
 from rsa import encrypt, decrypt
+from flask_session import Session
+import psycopg2
+import psycopg2.extras
+import json
+import os
+import uuid
+
+UPLOAD_FOLDER = '/mnt/d/Code/rsa-db/backend/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 public_key = (2465, 7081)
 private_key = (6497, 7081)
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+Session(app)
 
+psycopg2.extras.register_uuid()
 # Koneksi ke database PostgreSQL
 conn = psycopg2.connect(
     host="127.0.0.1",
@@ -21,10 +33,16 @@ conn = psycopg2.connect(
 # Membuat objek cursor
 cursor = conn.cursor()
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # Route untuk menambahkan admin
 @app.route('/api/admin', methods=['PUT'])
 def add_admin():
     try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
         # Mengambil data dari form
         data = request.get_json()
         
@@ -68,6 +86,8 @@ def login_admin():
         if (json_data == []):
             return jsonify(status=404, message='Failed')
         else:
+            # add session
+            session['username'] = data['username']
             return jsonify(status=200, message='Success')
     except Exception as e:
         print(e)
@@ -92,16 +112,24 @@ def add_data():
         status = encrypt("0", public_key)
 
         # Query untuk memasukkan data ke tabel
-        insert_query = "INSERT INTO participant (event_id, name, email, phone, address, city, province, country, zip_code, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        insert_query = "INSERT INTO participant (event_id, name, email, phone, address, city, province, country, zip_code, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING participant_id"
 
         # Menjalankan query untuk memasukkan data ke tabel
         cursor.execute(insert_query, (event, name, email, phone, address, city, province, country, zip_code, status))
 
+        participant = cursor.fetchone()[0]
+        
+        payment_id = uuid.uuid4().hex
+
+        insert_query = "INSERT INTO payment (payment_id, participant_id, event_id) VALUES (%s, %s, %s)"
+
+        cursor.execute(insert_query, (encrypt(payment_id, public_key), participant, event))
+
         # Commit perubahan ke database
         conn.commit()
-
+        
         # Menampilkan pesan sukses
-        return jsonify(status=200, message='Data berhasil dimasukkan')
+        return jsonify(status=200, message={'payment_id': payment_id})
     except Exception as e:
         print(e)
         return jsonify(status=500, message='Internal server error')
@@ -110,16 +138,27 @@ def add_data():
 @app.route('/api/payment/<payment_id>', methods=['POST'])
 def upload_payment(payment_id):
     try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
+        if 'receipt' not in request.files:
+            return jsonify(status=400, message='No file part')
+        
         receipt = request.files['receipt']
 
-        # Masukkan file ke folder
-        file_path = 'receipt/' + receipt.filename
-        receipt.save(file_path)
+        if receipt.filename == '':
+            return jsonify(status=400, message='No selected file')
+        
+        filename = uuid.uuid4().hex
+        if receipt and allowed_file(receipt.filename):
+            filename = secure_filename(filename + '.' + receipt.filename.rsplit('.', 1)[1].lower())
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            receipt.save(file_path)
         
         # Query untuk memasukkan data ke tabel
-        insert_query = "INSERT INTO payment (payment_id, file_path) VALUES (%s, %s)"
+        insert_query = "INSERT INTO receipt (payment_id, file_path) VALUES (array%s, array%s)" % (encrypt(payment_id, public_key), encrypt(file_path, public_key))
 
-        cursor.execute(insert_query, (payment_id, file_path))
+        cursor.execute(insert_query)
 
         # Commit perubahan ke database
         conn.commit()
@@ -130,27 +169,35 @@ def upload_payment(payment_id):
         return jsonify(status=500, message='Internal server error')
 
 # Route untuk menambahkan data pembayaran dan mengubah status peserta
-@app.route('/api/payment', methods=['PUT'])
-def add_payment():
-    try:
+@app.route('/api/payment/<payment_id>', methods=['PUT'])
+def add_payment(payment_id):
+    # try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
         # Mengambil data dari form
         data = request.get_json()
         
-        participant = data['participant']
+        payment_id = encrypt(payment_id, public_key)
         bank = encrypt(data['bank'], public_key)
         account_number = encrypt(data['account_number'], public_key)
 
+        # Query untuk update data payment
+        update_query = "UPDATE payment SET bank = array%s, account_number = array%s WHERE payment_id = array%s" % (bank, account_number, payment_id)
+
+        # Menjalankan query
+        cursor.execute(update_query)
+
+        # Query untuk mendapatkan data dari tabel
+        select_query = "SELECT participant_id FROM payment WHERE payment_id = array%s" % (payment_id)
+        # print(cursor.query)
+
+        cursor.execute(select_query)
+
+        participant = cursor.fetchone()[0]
+        
         # Query untuk memasukkan data ke tabel
-        insert_query = "INSERT INTO payment (participant_id, bank, account_number) VALUES (%s, %s, %s)"
-
-        # Menjalankan query untuk memasukkan data ke tabel
-        cursor.execute(insert_query, (participant, bank, account_number))
-
-        # Commit perubahan ke database
-        conn.commit()
-
-        # Query untuk memasukkan data ke tabel
-        update_query = "UPDATE participant SET status = %s WHERE id = %s" % (encrypt(1, public_key), participant)
+        update_query = "UPDATE participant SET status = array%s WHERE participant_id = %s" % (encrypt("1", public_key), participant)
 
         # Menjalankan query untuk memasukkan data ke tabel
         cursor.execute(update_query)
@@ -160,14 +207,17 @@ def add_payment():
 
         # Menampilkan pesan sukses
         return jsonify(status=200, message='Data berhasil dimasukkan')
-    except Exception as e:
-        print(e)
-        return jsonify(status=500, message='Internal server error')
+    # except Exception as e:
+        # print(e)
+        # return jsonify(status=500, message='Internal server error')
 
 # Route untuk menampilkan data peserta pada event tertentu
 @app.route('/api/participant/<event_id>', methods=['GET'])
 def get_data(event_id):
     try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
         # Query untuk mendapatkan data dari tabel
         select_query = "SELECT * FROM participant WHERE event_id = %s"
 
@@ -202,6 +252,9 @@ def get_data(event_id):
 @app.route('/api/event', methods=['POST'])
 def add_event():
     try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
         # Mengambil data dari form
         data = request.get_json()
         
@@ -296,6 +349,9 @@ def get_event_by_id(event_id):
 @app.route('/api/event/<event_id>', methods=['DELETE'])
 def delete_event(event_id):
     try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
         # Query untuk menghapus data dari tabel
         delete_query = "DELETE FROM event WHERE event_id = %s" % event_id
 
@@ -315,6 +371,9 @@ def delete_event(event_id):
 @app.route('/api/event/<event_id>', methods=['PATCH'])
 def update_event(event_id):
     try:
+        if not session.get('username'):
+            return jsonify(status=401, message='Unauthorized')
+        
         # Mengambil data dari form
         data = request.get_json()
         
@@ -340,7 +399,6 @@ def update_event(event_id):
     except Exception as e:
         print(e)
         return jsonify(status=500, message='Internal server error')
-    
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -46,7 +46,7 @@ CREATE TABLE participant (
 );
 
 CREATE TABLE payment (
-  payment_id SERIAL PRIMARY KEY,
+  payment_id INTEGER[] PRIMARY KEY,
   participant_id INTEGER,
   event_id INTEGER,
   bank INTEGER[],
@@ -57,9 +57,13 @@ CREATE TABLE payment (
 
 CREATE TABLE receipt (
   receipt_id SERIAL PRIMARY KEY,
-  payment_id INTEGER,
+  payment_id INTEGER[],
   file_path INTEGER[],
   FOREIGN KEY (payment_id) REFERENCES payment(payment_id)
+);
+
+INSERT INTO admin (username, password) VALUES ('{6208,3093,4086,4761,4382}', '{6208,3093,4086,4761,4382}'); /** admin:admin **/
+INSERT INTO event (name, description, location, date, time, quota, fee) VALUES ('Google Devfest 2022', 'Jakarta', 'Location for event 1', '2021-01-01', '09:00:00', 1000, 0);
 """
 
 # Menjalankan query untuk membuat tabel baru
