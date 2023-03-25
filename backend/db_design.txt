@@ -1,0 +1,35 @@
+Tabel event: tabel ini berisi detail tentang event, seperti nama event, deskripsi, lokasi, tanggal, waktu, dan biaya pendaftaran.
+
+Field	Type	Description
+event_id	int(11)	Primary key, unique identifier for each event
+name	varchar(255)	Name of the event
+description	text	Description of the event
+location	varchar(255)	Location where the event will be held
+date	date	Date when the event will take place
+time	time	Time when the event will start
+fee	decimal(10,2)	Cost of the registration for the event
+
+Tabel participant: tabel ini berisi detail tentang peserta, seperti nama, alamat email, nomor telepon, dan lainnya.
+
+Field	Type	Description
+participant_id	int(11)	Primary key, unique identifier for each participant
+event_id	int(11)	Foreign key, references the event table
+name	varchar(255)	Name of the participant
+email	varchar(255)	Email address of the participant
+phone	varchar(20)	Phone number of the participant
+address	text	Address of the participant
+city	varchar(255)	City where the participant resides
+state	varchar(255)	State where the participant resides
+country	varchar(255)	Country where the participant resides
+zip_code	varchar(10)	Zip code of the participant’s address
+status	enum('registered', 'attended', 'cancelled')	Status of the participant's registration (whether they have registered, attended, or cancelled their registration)
+
+Tabel payment: tabel ini berisi detail tentang pembayaran, seperti jumlah pembayaran, tanggal, metode pembayaran, dan lainnya.
+
+Field	Type	Description
+payment_id	int(11)	Primary key, unique identifier for each payment
+participant_id	int(11)	Foreign key, references the participant table
+amount	decimal(10,2)	Amount of the payment made by the participant
+date	datetime	Date and time when the payment was made
+method	enum('credit card', 'debit card', 'paypal', 'bank transfer')	Method of payment used by the participant
+status	enum('pending', 'completed', 'cancelled')	Status of the payment (whether it is pending, completed, or cancelled)

@@ -1,0 +1,19 @@
+2 level users (user, administrator)
+
+- Add admin [V]
+
+user:
+    - See all event [V]
+    - See specific event [V]
+    - Join event [V]
+    - Upload payment receipt [V]
+
+administrator:
+    - Login [V]
+    - See all event [V]
+    - See specific event [V]
+    - See all participant on specific event [V]
+    - Create event [V]
+    - Delete event [V]
+    - Update event [V]
+    - Accept/reject user [V]
