@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 const url = "http://127.0.0.1:5000";
 
@@ -42,46 +43,72 @@ export const useAppData = defineStore({
   id: "logicAPP",
   state: () => ({
     tx_data: {
-      name: "",
-      age: 0,
-      email: "",
+      nisn: "",
+      nama_ibu: "",
     },
-    loading: false,
+    loading: false
   }),
   getters: {},
   actions: {
-    async insertData() {
-      console.log("Inserting data...");
-      let that = this;
-      this.loading = true;
-      try {
-        await axios
-          .post(url + "/add", {
-            name: that.tx_data.name,
-            age: that.tx_data.age.toString(),
-            email: that.tx_data.email,
-          })
-          .then((res) => {
-            console.log(res.data);
-          });
-        this.tx_data.name = "";
-        this.tx_data.age = "";
-        this.tx_data.email = "";
-      } catch (error) {
-        console.log(error);
-      }
-      this.loading = false;
-    },
     async getData() {
       console.log("Getting data...");
       let that = this;
       this.loading = true;
+      console.log(that.tx_data.nisn);
+      console.log(that.tx_data.nama_ibu);
       try {
-        await axios.get(url + "/get").then((res) => {
-          console.log(res.data.data);
-        });
+        fetch(url + '/api/nisn/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nisn: that.tx_data.nisn,
+            nama_ibu: that.tx_data.nama_ibu,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+            Swal.fire({
+              title: 'Data Siswa',
+              html: `
+              <table class="table table-striped">
+                <tr>
+                  <td>NISN</td>
+                  <td>${data.data[0].nisn}</td>
+                </tr>
+                <tr>
+                  <td>Nama</td>
+                  <td>${data.data[0].nama_siswa}</td>
+                </tr>
+                <tr>
+                  <td>Tempat Lahir</td>
+                  <td>${data.data[0].tempat_lahir}</td>
+                </tr>
+                <tr>
+                  <td>Tanggal Lahir</td>
+                  <td>${data.data[0].tanggal_lahir}</td>
+                </tr>
+                <tr>
+                  <td>Jenis Kelamin</td>
+                  <td>${data.data[0].jenis_kelamin}</td>
+                </tr>
+                <tr>
+                  <td>Agama</td>
+                  <td>${data.data[0].agama}</td>
+                </tr>
+                <tr>
+                  <td>Alamat</td>
+                  <td>${data.data[0].alamat}</td>
+                </tr>
+                `
+            })
+          }
+          );
       } catch (error) {
-        console.log(error);
+        console.error("Error:", error);
+
       }
       this.loading = false;
     },

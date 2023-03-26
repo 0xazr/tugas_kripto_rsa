@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" :class="{ 'theme-dark': dark }" x-data="data()">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Database with RSA</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./src/assets/css/tailwind.output.css" />
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <!-- <script src="./src/assets/js/init-alpine.js"></script> -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-      defer
-    ></script>
-    <script src="./src/assets/js/charts-lines.js" defer></script>
-    <script src="./src/assets/js/charts-pie.js" defer></script>
+  <html lang="en">
+	<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Nomor Induk Siswa Nasional</title>
+    <link rel="shortcut icon" href="https://nisn.data.kemdikbud.go.id/assets/images/tutwuri.png">
+    <link href="https://nisn.data.kemdikbud.go.id/assets/landing_page/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="https://nisn.data.kemdikbud.go.id/assets/landing_page/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://nisn.data.kemdikbud.go.id/assets/landing_page/vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+    <link href="https://nisn.data.kemdikbud.go.id/assets/landing_page/css/landing-page.min.css" rel="stylesheet">
+    <link href="https://nisn.data.kemdikbud.go.id/assets/adminlte/dist/css/AdminLTE.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://nisn.data.kemdikbud.go.id/assets/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://nisn.data.kemdikbud.go.id/assets/adminlte/plugins/datepicker/datepicker3.css">
+    <link rel="stylesheet" href="https://nisn.data.kemdikbud.go.id/assets/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="https://nisn.data.kemdikbud.go.id/assets/leafletfullscreen/leaflet.fullscreen.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.css" integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ==" crossorigin="">
+    <script src="https://nisn.data.kemdikbud.go.id/assets/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="https://nisn.data.kemdikbud.go.id/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://nisn.data.kemdikbud.go.id/assets/formvalidation/form-validator/jquery.form-validator.js"></script>
+    <script src="https://nisn.data.kemdikbud.go.id/assets/adminlte/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="https://nisn.data.kemdikbud.go.id/assets/leaflet/leaflet.js"></script>
+    <script src="https://nisn.data.kemdikbud.go.id/assets/leafletfullscreen/Leaflet.fullscreen.min.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@2.2.4/dist/esri-leaflet.js" integrity="sha512-tyPum7h2h36X52O2gz+Pe8z/3l+Y9S1yEUscbVs5r5aEY5dFmP1WWRY/WLLElnFHa+k1JBQZSCDGwEAnm2IxAQ==" crossorigin=""></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js" integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A==" crossorigin=""></script>
   </head>
   <body>
     <div id="app"></div>
