@@ -18,7 +18,7 @@ conn.autocommit = True
 cursor = conn.cursor()
 
 # Query untuk membuat database baru
-create_db_query = "CREATE DATABASE db_joinevent;"
+create_db_query = "CREATE DATABASE db_nisn;"
 
 # Menjalankan query untuk membuat database baru
 cursor.execute(create_db_query)
