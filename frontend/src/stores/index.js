@@ -1,43 +1,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const url = "http://127.0.0.1:5000";
-
-export const useLogicUI = defineStore({
-  id: "logicUI",
-  state: () => ({
-    isSideMenuOpen: false,
-    isNotificationsMenuOpen: false,
-    isProfileMenuOpen: false,
-    isPagesMenuOpen: false,
-    dark: false,
-  }),
-  getters: {},
-  actions: {
-    toggleSideMenu() {
-      this.isSideMenuOpen = !this.isSideMenuOpen;
-    },
-    togglePagesMenu() {
-      this.isPagesMenuOpen = !this.isPagesMenuOpen;
-    },
-    closeSideMenu() {
-      this.isSideMenuOpen = false;
-    },
-    toggleNotificationsMenu() {
-      this.isNotificationsMenuOpen = !this.isNotificationsMenuOpen;
-    },
-    closeNotificationsMenu() {
-      this.isNotificationsMenuOpen = false;
-    },
-    toggleProfileMenu() {
-      this.isProfileMenuOpen = !this.isProfileMenuOpen;
-    },
-    closeProfileMenu() {
-      this.isProfileMenuOpen = false;
-    },
-  },
-});
 
 export const useAppData = defineStore({
   id: "logicAPP",
@@ -47,7 +12,7 @@ export const useAppData = defineStore({
       nama_ibu: "",
     },
     loading: false,
-    expand: false
+    expand: false,
   }),
   getters: {},
   actions: {
@@ -58,10 +23,10 @@ export const useAppData = defineStore({
       console.log(that.tx_data.nisn);
       console.log(that.tx_data.nama_ibu);
       try {
-        fetch(url + '/api/nisn/', {
-          method: 'POST',
+        fetch(url + "/api/nisn/", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             nisn: that.tx_data.nisn,
@@ -70,9 +35,9 @@ export const useAppData = defineStore({
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log('Success:', data);
+            console.log("Success:", data);
             Swal.fire({
-              title: 'Data Siswa',
+              title: "Data Siswa",
               html: `
               <table class="table table-striped">
                 <tr>
@@ -103,18 +68,16 @@ export const useAppData = defineStore({
                   <td>Alamat</td>
                   <td>${data.data[0].alamat}</td>
                 </tr>
-                `
-            })
-          }
-          );
+                `,
+            });
+          });
       } catch (error) {
         console.error("Error:", error);
-
       }
       this.loading = false;
     },
     toggleExpand() {
       this.expand = !this.expand;
-    }
+    },
   },
 });
