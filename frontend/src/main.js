@@ -2,7 +2,7 @@ import { createApp, markRaw } from "vue";
 import { createPinia } from "pinia";
 
 // import './style.css'
-// import "./index.css";
+import "./index.css";
 
 import App from "./App.vue";
 import router from "./router";
