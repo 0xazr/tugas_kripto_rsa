@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import axios from "axios";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const url = "http://127.0.0.1:5000";
 
@@ -36,40 +36,48 @@ export const useAppData = defineStore({
           .then((response) => response.json())
           .then((data) => {
             console.log("Success:", data);
-            Swal.fire({
-              title: "Data Siswa",
-              html: `
-              <table class="table table-striped">
-                <tr>
-                  <td>NISN</td>
-                  <td>${data.data[0].nisn}</td>
-                </tr>
-                <tr>
-                  <td>Nama</td>
-                  <td>${data.data[0].nama_siswa}</td>
-                </tr>
-                <tr>
-                  <td>Tempat Lahir</td>
-                  <td>${data.data[0].tempat_lahir}</td>
-                </tr>
-                <tr>
-                  <td>Tanggal Lahir</td>
-                  <td>${data.data[0].tanggal_lahir}</td>
-                </tr>
-                <tr>
-                  <td>Jenis Kelamin</td>
-                  <td>${data.data[0].jenis_kelamin}</td>
-                </tr>
-                <tr>
-                  <td>Agama</td>
-                  <td>${data.data[0].agama}</td>
-                </tr>
-                <tr>
-                  <td>Alamat</td>
-                  <td>${data.data[0].alamat}</td>
-                </tr>
-                `,
-            });
+            if (data.status == 200) {
+              Swal.fire({
+                title: "Data Siswa",
+                html: `
+                <table class="table table-striped">
+                  <tr>
+                    <td>NISN</td>
+                    <td>${data.data[0].nisn}</td>
+                  </tr>
+                  <tr>
+                    <td>Nama</td>
+                    <td>${data.data[0].nama_siswa}</td>
+                  </tr>
+                  <tr>
+                    <td>Tempat Lahir</td>
+                    <td>${data.data[0].tempat_lahir}</td>
+                  </tr>
+                  <tr>
+                    <td>Tanggal Lahir</td>
+                    <td>${data.data[0].tanggal_lahir}</td>
+                  </tr>
+                  <tr>
+                    <td>Jenis Kelamin</td>
+                    <td>${data.data[0].jenis_kelamin}</td>
+                  </tr>
+                  <tr>
+                    <td>Agama</td>
+                    <td>${data.data[0].agama}</td>
+                  </tr>
+                  <tr>
+                    <td>Alamat</td>
+                    <td>${data.data[0].alamat}</td>
+                  </tr>
+                  `,
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Data tidak ditemukan!",
+              });
+            }
           });
       } catch (error) {
         console.error("Error:", error);

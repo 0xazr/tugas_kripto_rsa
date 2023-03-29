@@ -65,7 +65,7 @@
       ></div>
     </div>
     <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
-      <form class="bg-white w-4/6">
+      <div class="bg-white w-4/6">
         <img
           class="h-20 w-20 object-cover rounded-full"
           src="./assets/nisn.png"
@@ -98,6 +98,7 @@
             name=""
             id=""
             placeholder="NISN"
+            v-model="AppData.tx_data.nisn"
           />
         </div>
         <p class="text-m font-normal text-gray-600 mb-1">
@@ -122,15 +123,17 @@
             name=""
             id=""
             placeholder="Nama Ibu Kandung"
+            v-model="AppData.tx_data.nama_ibu"
           />
         </div>
         <button
-          type="submit"
+          @click="AppData.getData()"
+          @keydown.enter="AppData.getData()"
           class="block w-full bg-blue-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
         >
           Cari Data
         </button>
-      </form>
+      </div>
     </div>
   </div>
 </template>

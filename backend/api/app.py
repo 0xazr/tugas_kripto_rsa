@@ -131,7 +131,11 @@ def get_nisn_by_nisn():
             })
 
         # Menampilkan hasil query
-        return jsonify(status=200, message='Data berhasil didapatkan', data=data)
+        if (len(data) == 0):
+            return jsonify(status=404, message='Data tidak ditemukan')
+        else:
+            return jsonify(status=200, message='Data berhasil didapatkan', data=data)
+
     except Exception as e:
         print(e)
         return jsonify(status=500, message='Internal server error')
