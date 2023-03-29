@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const url = "http://127.0.0.1:5000";
 
@@ -12,6 +12,7 @@ export const useLogicUI = defineStore({
     isProfileMenuOpen: false,
     isPagesMenuOpen: false,
     dark: false,
+    expand: false,
   }),
   getters: {},
   actions: {
@@ -36,6 +37,10 @@ export const useLogicUI = defineStore({
     closeProfileMenu() {
       this.isProfileMenuOpen = false;
     },
+    toggleExpand() {
+      this.expand = !this.expand;
+      console.log(this.expand);
+    },
   },
 });
 
@@ -46,7 +51,7 @@ export const useAppData = defineStore({
       nisn: "",
       nama_ibu: "",
     },
-    loading: false
+    loading: false,
   }),
   getters: {},
   actions: {
@@ -57,10 +62,10 @@ export const useAppData = defineStore({
       console.log(that.tx_data.nisn);
       console.log(that.tx_data.nama_ibu);
       try {
-        fetch(url + '/api/nisn/', {
-          method: 'POST',
+        fetch(url + "/api/nisn/", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             nisn: that.tx_data.nisn,
@@ -69,9 +74,9 @@ export const useAppData = defineStore({
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log('Success:', data);
+            console.log("Success:", data);
             Swal.fire({
-              title: 'Data Siswa',
+              title: "Data Siswa",
               html: `
               <table class="table table-striped">
                 <tr>
@@ -102,13 +107,11 @@ export const useAppData = defineStore({
                   <td>Alamat</td>
                   <td>${data.data[0].alamat}</td>
                 </tr>
-                `
-            })
-          }
-          );
+                `,
+            });
+          });
       } catch (error) {
         console.error("Error:", error);
-
       }
       this.loading = false;
     },
