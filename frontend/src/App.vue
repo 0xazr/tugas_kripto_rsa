@@ -136,14 +136,12 @@
 </template>
 
 <script>
-import { useLogicUI, useAppData } from "./stores/index.js";
+import { useAppData } from "./stores/index.js";
 
 export default {
   setup() {
-    const LogicUI = useLogicUI();
     const AppData = useAppData();
     return {
-      LogicUI,
       AppData,
     };
   },
