@@ -23,11 +23,13 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 # Route untuk menambahkan data nisn
+
+
 @app.route('/api/nisn', methods=['PUT'])
 def add_nisn():
     try:
         data = request.get_json()
-        
+
         nisn = encrypt(data['nisn'], public_key)
         nama_siswa = encrypt(data['nama_siswa'], public_key)
         jenis_kelamin = encrypt(data['jenis_kelamin'], public_key)
@@ -42,7 +44,8 @@ def add_nisn():
 
         insert_query = "INSERT INTO nisn (nisn, nama_siswa, jenis_kelamin, tempat_lahir, tanggal_lahir, agama, alamat, nama_ayah, nama_ibu, alamat_ortu, no_telp_ortu) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         # Menjalankan query untuk memasukkan data ke tabel
-        cursor.execute(insert_query, (nisn, nama_siswa, jenis_kelamin, tempat_lahir, tanggal_lahir, agama, alamat, nama_ayah, nama_ibu, alamat_ortu, no_telp_ortu))
+        cursor.execute(insert_query, (nisn, nama_siswa, jenis_kelamin, tempat_lahir,
+                       tanggal_lahir, agama, alamat, nama_ayah, nama_ibu, alamat_ortu, no_telp_ortu))
 
         # Commit perubahan ke database
         conn.commit()
@@ -54,6 +57,8 @@ def add_nisn():
         return jsonify(status=500, message='Internal server error')
 
 # Route untuk menampilkan semua data nisn
+
+
 @app.route('/api/nisn', methods=['GET'])
 def get_nisn():
     try:
@@ -87,8 +92,10 @@ def get_nisn():
     except Exception as e:
         print(e)
         return jsonify(status=500, message='Internal server error')
-    
+
 # Route untuk menampilkan data nisn berdasarkan nisn
+
+
 @app.route('/api/nisn/', methods=['POST'])
 def get_nisn_by_nisn():
     try:
@@ -98,14 +105,15 @@ def get_nisn_by_nisn():
         nama_ibu = encrypt(data['nama_ibu'], public_key)
 
         # Query untuk menampilkan data nisn berdasarkan nisn
-        select_query = "SELECT * FROM nisn WHERE nisn = array%s AND nama_ibu = array%s" % (nisn, nama_ibu)
+        select_query = "SELECT * FROM nisn WHERE nisn = array%s AND nama_ibu = array%s" % (
+            nisn, nama_ibu)
 
         # Menjalankan query untuk menampilkan data nisn berdasarkan nisn
         cursor.execute(select_query)
 
         # Mengambil semua hasil query
         result = cursor.fetchall()
-        
+
         data = []
         for row in result:
             data.append({
@@ -127,6 +135,7 @@ def get_nisn_by_nisn():
     except Exception as e:
         print(e)
         return jsonify(status=500, message='Internal server error')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

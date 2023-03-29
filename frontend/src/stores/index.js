@@ -46,7 +46,8 @@ export const useAppData = defineStore({
       nisn: "",
       nama_ibu: "",
     },
-    loading: false
+    loading: false,
+    expand: false
   }),
   getters: {},
   actions: {
@@ -112,5 +113,8 @@ export const useAppData = defineStore({
       }
       this.loading = false;
     },
+    toggleExpand() {
+      this.expand = !this.expand;
+    }
   },
 });
